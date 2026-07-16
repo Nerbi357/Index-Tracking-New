@@ -31,7 +31,11 @@
   parenthetical asides — then drop a **short verdict** (2-6 words) right after.
 - Parentheses are the main way to qualify: example, limitation, synonym (nesting allowed).
 - For 3+ reasons use numbering: «во-первых, … во-вторых, …» or «а) …; б) …».
-- Frames: «Если …, то …», «Что касается X, то …», anaphoric «Это …» opening a sentence.
+- Frames, stated explicitly: «Так как …, то …», «Если …, то …», «Что касается X, то …»,
+  anaphoric «Это …» opening a sentence. Keep the paired «то» (not «Если X, я …» - «Если X,
+  то я …»).
+- Prefer the precise technical term over a colorful synonym for a technical concept:
+  «смещенный результат», not «приукрашенный»; «tracking error», not «ошибка слежения».
 - Contrast formulas: «не только X, но и Y», «не X, а Y».
 
 ## Connectives & markers
