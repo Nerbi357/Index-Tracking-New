@@ -278,6 +278,12 @@ narrative + the key code without digging through `src/`.
 calls are our own code — to debug one, open the matching file in `src/index_tracking/` —
 versus third-party library calls, which are used as-is.
 
+**Final deliverable structure.** Develop with the `src/index_tracking/` package (organized,
+tested). At the very end, consolidate the package into a single `custom_functions.py` placed
+next to the notebooks, so the minimal deliverable is the content notebooks + `04_report` +
+`custom_functions.py` + `requirements.txt`, runnable with no `pip install`. What else to
+keep (tests, `SPEC.md`, `OUTPUTS.md`, ...) is decided after the author's canonical run.
+
 ### Ways of working (per-block, human-in-the-loop)
 
 For every conceptual block:
