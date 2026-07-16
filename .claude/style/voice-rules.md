@@ -5,6 +5,19 @@
 > for this project's notebooks: **semi-formal, personal** (open «я»/«мы»), lively but
 > professional.
 
+## Framing & tone (this project specifically)
+- This is the **author's own pet project**. Write in the **first person as the owner**:
+  «я решил реплицировать индекс», «мне нужно», «мой период», «мой проект». Present every
+  choice as the author's own decision.
+- **Never** frame anything as an external assignment or requirement - not «задание
+  требует», «по заданию», «нужно сделать» as if ordered. Nobody assigned this; the author
+  chose to do it.
+- Comments exist for **clarity, not drama**. Drop pompous or radical intensifiers that add
+  heat without information: «Разница принципиальная», «принципиально важно», preachy
+  verdicts like «Так делать нельзя». State the point plainly.
+- Prefer a **direct categorical** statement over a flippant throwaway: «без этого
+  воспроизводимость невозможна», not «без этого про воспроизводимость можно забыть».
+
 ## Hard rules (never violate)
 - **No long dash «—»** anywhere. Use a colon, parentheses, or « - » (hyphen with spaces).
 - **No «ё»** — always write «е».
