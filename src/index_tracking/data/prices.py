@@ -36,6 +36,15 @@ TICKER_RENAMES: dict[str, str] = {
     "HFC": "DINO",  # HollyFrontier -> HF Sinclair
     "DISCA": "WBD",  # Discovery -> Warner Bros. Discovery
     "DISCK": "WBD",
+    "ABC": "COR",  # AmerisourceBergen -> Cencora
+    "ADS": "BFH",  # Alliance Data -> Bread Financial
+    "UTX": "RTX",  # United Technologies -> RTX (accounting predecessor of RTX)
+    "SYMC": "GEN",  # Symantec -> NortonLifeLock -> Gen Digital (same listing)
+    "NLOK": "GEN",  # NortonLifeLock -> Gen Digital
+    "RE": "EG",  # Everest Re -> Everest Group
+    "PEAK": "DOC",  # Healthpeak ticker change
+    "FLT": "CPAY",  # Fleetcor -> Corpay
+    "CDAY": "DAY",  # Ceridian -> Dayforce
 }
 
 

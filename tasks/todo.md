@@ -8,7 +8,7 @@ Task detail lives in `tasks/plan.md`. Check off as completed.
 - [x] **Checkpoint:** installs, imports, `pytest` green
 
 ## Phase 1 — Data pipeline
-- [ ] Task 3 — Yahoo price client (`requests`, backoff, cache) + `^SP500TR`
+- [x] Task 3 — Yahoo price client (`requests`, backoff, cache) + `^SP500TR` + Stooq/rename recovery
 - [x] Task 4 — PIT constituents loader (GitHub) + `members_on(date)` + Wikipedia cross-check
 - [ ] Task 5 — Snapshot builder + missing-data policy → committed parquet + coverage
 - [ ] **Checkpoint:** snapshot committed, coverage documented — **review with human**
