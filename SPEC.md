@@ -46,14 +46,17 @@ transaction costs affect the strategy**.
 ## 3. Tech stack
 
 - **Python 3.11**.
-- **Data:** `yfinance` (weekly adjusted prices); point-in-time constituents from a
-  GitHub-hosted historical S&P 500 membership dataset; `pandas`, `pyarrow` (parquet).
+- **Data:** a thin **`requests`-based Yahoo Finance client** (chart JSON API) for weekly
+  adjusted prices — confirmed working through the environment's TLS-re-terminating egress
+  proxy. Note `yfinance` / `curl_cffi` browser-impersonation is **reset** by that proxy
+  and is deliberately **not** used. Point-in-time constituents from a GitHub-hosted
+  historical S&P 500 membership dataset. `pandas`, `pyarrow` (parquet).
 - **Modeling:** `numpy`, `scipy`, `cvxpy` (convex tracking), `scikit-learn`
   (LASSO / Elastic-Net). Exact-cardinality solver TBD (Open Question 4), **pure Python
   — no R/rpy2**.
 - **Viz:** `matplotlib` (primary), optionally `seaborn`.
-- **Report:** notebook → PDF (`nbconvert`) or a dedicated figures notebook + short
-  write-up (Open Question 5).
+- **Report:** notebook → PDF via `nbconvert`. Presentation quality is a first-class
+  requirement — the ≤5-page PDF must look **polished, clear, and official**.
 - **Quality:** `pytest`, `ruff` (lint), `black` (format).
 
 ## 4. Commands (provisional — will firm up in Plan)
@@ -187,19 +190,20 @@ From simplest to most sophisticated (final v1 scope = Open Question 3):
 - **Reproducibility:** fresh clone + committed snapshot → notebooks run end-to-end
   **offline**; `pytest` green.
 
-## 12. Open questions (please review / correct)
+## 12. Decisions (review round 1 — locked)
 
-1. **Index universe — S&P 500 vs S&P 100.** You chose S&P 500. Caveat: `yfinance` often
-   has no data for **long-delisted** tickers, so a full point-in-time S&P 500 universe
-   may still show gaps. **S&P 100** (the assignment's own example) is large-cap, far more
-   stable, cleaner coverage, faster iteration — and sparse tracking is just as
-   illustrative. Keep S&P 500, or switch to S&P 100? (Pipeline stays index-agnostic either
-   way.)
-2. **Rebalance frequency** — monthly (default, realistic turnover) vs weekly (more
-   reactive, higher costs)?
-3. **Method scope for v1** — which of the five methods in section 7 do we implement first?
-   (Suggested v1: 1 + 2 + 3; 4 and 5 as stretch.)
-4. **Exact-cardinality solver** — include a pure-Python mixed-integer method, or skip the
-   exact method for v1? (Avoids R entirely.)
-5. **Report toolchain** — notebook → PDF via `nbconvert`, or a LaTeX write-up?
-6. **Benchmark** — total-return index (matches the draft) vs price index?
+1. **Index:** **S&P 500.** The universe stays configurable; delisted-ticker gaps are
+   handled by an explicit, logged missing-data policy (never silent fills).
+2. **Rebalance frequency:** **monthly** (on weekly price data).
+3. **Method scope for v1:** **decided at implementation time**, per method. The data
+   pipeline and backtest engine are built method-agnostic first; the concrete v1 method
+   set is chosen when we reach the methods milestone.
+4. **Exact cardinality** (mixed-integer, pure Python): included as a **stretch** method.
+5. **Report toolchain:** notebook → PDF via **`nbconvert`**, with **polished, clear,
+   official** presentation treated as a first-class requirement.
+6. **Benchmark:** S&P 500 **total-return** index (`^SP500TR`), dividends included.
+
+**Data access (confirmed).** Live weekly fetch works via plain `requests` + the proxy CA
+bundle (`REQUESTS_CA_BUNDLE` / `SSL_CERT_FILE`). Primary data risk is Yahoo rate-limiting
+(429) at scale → mitigate with throttling, retry/backoff, and an on-disk cache; commit the
+resulting snapshot for reproducibility.
