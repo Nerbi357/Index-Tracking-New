@@ -259,6 +259,11 @@ Additional rules:
   reproduces the data stage. Heavy live fetches are wrapped in cache/snapshot-aware builders
   (e.g. `custom_build_price_snapshot`) so a rerun loads the committed result instead of
   re-fetching.
+- **Final-run canonicity.** The author's own fresh run is the source of truth for final
+  numbers, so notebook prose stays **qualitative** about run-dependent quantities (exact
+  figures live in code outputs, which recompute). At final cleanup the regenerable data
+  (`data/snapshot/`, `data/tables/*.csv`) and working branches are removed; running the
+  notebooks rebuilds everything. The output→folder map lives in `OUTPUTS.md`.
 
 ### Code placement (hybrid)
 
