@@ -231,6 +231,12 @@ created as needed and later distilled into these. The final notebooks are create
 Notebooks are **decoupled**: each reads the previous stage's exported artifacts, so they
 run independently and stay reproducible.
 
+### Language workflow
+
+Build the entire project — notebooks and the final report — in **Russian** first. Only at
+the very end, after the author approves everything, translate all notebooks to English and
+produce the final report in **both Russian and English**.
+
 ### Notebook internal convention
 
 Each notebook = **conceptual blocks**. For every block:
@@ -247,6 +253,12 @@ the **author's voice** — lively, semi-formal (samples provided by the author o
 Reusable, tested primitives live in `src/index_tracking/` (the engine). Notebooks import
 them **and** show the meaningful analysis code inline with rationale, so a reader sees the
 narrative + the key code without digging through `src/`.
+
+**Custom-code marker.** Every project-defined function carries a `custom_` prefix
+(e.g. `custom_tracking_error`, `custom_run_backtest`); project-defined classes carry a
+`Custom` prefix (e.g. `CustomBacktest`). So in a notebook it is immediately obvious which
+calls are our own code — to debug one, open the matching file in `src/index_tracking/` —
+versus third-party library calls, which are used as-is.
 
 ### Ways of working (per-block, human-in-the-loop)
 
