@@ -17,6 +17,7 @@ Yahoo's free data changes over time (that is expected and documented in the note
 - `data/tables/coverage_by_date.csv` — member coverage per rebalance date
 - `data/tables/missing_tickers.csv` — names with no price
 - `data/tables/data_quality.csv` — per-ticker within-membership coverage + status
+- `data/tables/shares_outstanding.csv` — current shares outstanding (cap-weighted baseline)
 
 ## `notebooks/02_modeling.ipynb` → results (reads NB1 exports)
 _to be filled as we build it_
