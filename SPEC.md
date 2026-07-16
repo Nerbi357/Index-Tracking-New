@@ -248,6 +248,18 @@ Each notebook = **conceptual blocks**. For every block:
 Notebooks must be **self-sufficient** (readable without the report). Narrative prose is in
 the **author's voice** — lively, semi-formal (samples provided by the author on request).
 
+Additional rules:
+- **All imports live in the first block**; later blocks never re-import.
+- **Document problems as they happen.** Every time a substantive issue comes up (a data
+  trap, a bug, a limitation), add a short «проблема → как решил» note inline. This keeps
+  the project honest and practically useful.
+- **Reproducibility invariant.** Each notebook reproduces its own outputs on its own, using
+  only `src/` code + committed artifacts from earlier notebooks — never an ad-hoc script.
+  Running NB1 → NB2 → NB3 in order reproduces the whole project; running NB1 alone
+  reproduces the data stage. Heavy live fetches are wrapped in cache/snapshot-aware builders
+  (e.g. `custom_build_price_snapshot`) so a rerun loads the committed result instead of
+  re-fetching.
+
 ### Code placement (hybrid)
 
 Reusable, tested primitives live in `src/index_tracking/` (the engine). Notebooks import

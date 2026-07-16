@@ -207,3 +207,58 @@ def custom_recover_via_stooq(failed, start, end, **kw):
         else:
             still.append(ticker)
     return recovered, still
+
+
+def custom_build_price_snapshot(
+    universe, start, end, *, benchmark: str = "^SP500TR",
+    snapshot_dir: str = "data/snapshot", tables_dir: str = "data/tables", force: bool = False,
+):
+    """Build (or load) the committed weekly price snapshot for the whole universe.
+
+    On a fresh run this fetches every ticker (proactive renames), retries transient
+    rate-limit failures, tries Stooq for the rest, aligns to a Friday weekly grid, and
+    writes the snapshot + coverage tables. If the snapshot already exists it is simply
+    loaded - so the notebook reproduces the exact committed data instead of re-hitting
+    Yahoo on every run. Returns ``(panel, benchmark_frame)``.
+    """
+    snap_path = os.path.join(snapshot_dir, "prices_weekly.parquet")
+    bench_path = os.path.join(snapshot_dir, "benchmark.parquet")
+    if not force and os.path.exists(snap_path) and os.path.exists(bench_path):
+        return pd.read_parquet(snap_path), pd.read_parquet(bench_path)
+
+    panel, failed = custom_fetch_weekly_prices(universe, start, end)
+    if failed:  # patient retry for transient rate-limit victims
+        still = []
+        for ticker in failed:
+            sym = TICKER_RENAMES.get(ticker, ticker)
+            s = custom_fetch_one(sym, start, end, retries=5, base_sleep=1.0, throttle=0.5)
+            if s is not None and not s.dropna().empty:
+                s.name = ticker
+                panel[ticker] = s
+            else:
+                still.append(ticker)
+        failed = still
+    if failed:  # Stooq fallback for genuinely Yahoo-missing names
+        stooq_rec, failed = custom_recover_via_stooq(failed, start, end)
+        for ticker, s in stooq_rec.items():
+            panel[ticker] = s
+
+    panel = panel.resample("W-FRI").last()  # fix Thu/Mon weekly-bar anchoring
+    bench_series = custom_fetch_one(benchmark, start, end)
+    bench = (
+        bench_series.to_frame("SP500TR").resample("W-FRI").last()
+        if bench_series is not None
+        else pd.DataFrame()
+    )
+
+    os.makedirs(snapshot_dir, exist_ok=True)
+    os.makedirs(tables_dir, exist_ok=True)
+    panel.to_parquet(snap_path)
+    bench.to_parquet(bench_path)
+    pd.DataFrame({"ticker": sorted(set(universe) - set(panel.columns))}).to_csv(
+        os.path.join(tables_dir, "missing_tickers.csv"), index=False
+    )
+    cov = pd.DataFrame({"ticker": sorted(panel.columns)})
+    cov["n_obs"] = [int(panel[t].dropna().shape[0]) for t in cov["ticker"]]
+    cov.to_csv(os.path.join(tables_dir, "price_coverage.csv"), index=False)
+    return panel, bench
