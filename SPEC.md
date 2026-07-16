@@ -84,25 +84,29 @@ jupyter lab
 
 ```
 data/
-  snapshot/           # committed reproducible data snapshot (parquet)
+  snapshot/           # committed price/benchmark/constituents snapshot (parquet)
+  tables/             # NB1 exported tables (universe, coverage, ...)
   raw_cache/          # gitignored local fetch cache
+results/
+  tables/             # NB2 exported results (metrics, backtest, turnover, robustness)
 src/index_tracking/
   data/               # fetch, constituents (PIT), cleaning, caching — SOURCE-AGNOSTIC
   methods/            # tracking methods (baseline, lasso, convex, exact, ...)
   backtest/           # walk-forward engine, rebalancing, turnover, costs
   metrics/            # tracking error, summary stats, returns
-  viz/                # plotting helpers
-notebooks/
-  01_data.ipynb              # collection, cleaning, EDA
-  02_methods.ipynb           # each method explained + in-sample checks
-  03_backtest_eval.ipynb     # walk-forward OOS, costs, turnover
-  04_report_figures.ipynb    # final tables/figures for the PDF
+  viz/                # plotting helpers (shared figure theme)
+notebooks/            # DELIVERABLE notebooks — see section 13
+  01_data.ipynb              # env + data import + exports  -> data/
+  02_modeling.ipynb          # methods, metrics, backtests, robustness -> results/
+  03_analysis.ipynb          # visualization (data -> results) + conclusions
+  04_report.ipynb            # technical: assembles key items -> reports/report.pdf
 reports/
-  report.pdf                 # the <=5-page deliverable (+ source)
-tests/                       # pytest: metrics, cleaning, methods on fixtures
+  figures/            # saved figures (NB3)
+  report.pdf          # the <=5-page deliverable
+tests/                # pytest: metrics, cleaning, methods on fixtures
 pyproject.toml
 README.md
-.claude/                     # vendored agent-skills — DELETABLE at project end
+.claude/              # vendored agent-skills — DELETABLE at project end
 ```
 
 **Rule:** notebooks contain narrative + calls into `src/`; **no core logic lives in
@@ -207,3 +211,52 @@ From simplest to most sophisticated (final v1 scope = Open Question 3):
 bundle (`REQUESTS_CA_BUNDLE` / `SSL_CERT_FILE`). Primary data risk is Yahoo rate-limiting
 (429) at scale → mitigate with throttling, retry/backoff, and an on-disk cache; commit the
 resulting snapshot for reproducibility.
+
+## 13. Deliverable notebooks & ways of working
+
+### Deliverable notebooks (final artifacts)
+
+Three content notebooks + one technical report notebook. Working/scratch notebooks may be
+created as needed and later distilled into these. The final notebooks are created up front
+(empty skeletons) and **filled block-by-block after the author approves each block**:
+
+- `notebooks/01_data.ipynb` — environment + data import; exports snapshot & tables to `data/`.
+- `notebooks/02_modeling.ipynb` — all methods, metrics, walk-forward backtests, robustness;
+  exports results to `results/`.
+- `notebooks/03_analysis.ipynb` — visualization of the whole path (data → processing →
+  results) + substantive conclusions, risks, limitations, extensions, extra sections.
+- `notebooks/04_report.ipynb` — technical: gathers the key tables/figures and renders the
+  polished ≤ 5-page `reports/report.pdf`.
+
+Notebooks are **decoupled**: each reads the previous stage's exported artifacts, so they
+run independently and stay reproducible.
+
+### Notebook internal convention
+
+Each notebook = **conceptual blocks**. For every block:
+1. A short **markdown intro before the block** — what it does and **why** (the decision and
+   what it is based on).
+2. The **code** cells.
+3. After important outputs, a **short markdown note** interpreting the result.
+
+Notebooks must be **self-sufficient** (readable without the report). Narrative prose is in
+the **author's voice** — lively, semi-formal (samples provided by the author on request).
+
+### Code placement (hybrid)
+
+Reusable, tested primitives live in `src/index_tracking/` (the engine). Notebooks import
+them **and** show the meaningful analysis code inline with rationale, so a reader sees the
+narrative + the key code without digging through `src/`.
+
+### Ways of working (per-block, human-in-the-loop)
+
+For every conceptual block:
+1. **Discuss** the block idea + decisions with the author; get approval.
+2. **Implement** in `src/` and/or a scratch notebook; verify (tests / run).
+3. **Fill** the corresponding block in the final notebook (intro + code + interpretation),
+   in the author's voice.
+4. **Commit + push**, then tell the author exactly **where to look** (notebook, block,
+   cells) and what changed.
+
+The author reviews and corrects at **every block**. This finer granularity sits inside the
+phase checkpoints in `tasks/plan.md`.

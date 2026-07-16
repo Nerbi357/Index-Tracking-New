@@ -14,6 +14,14 @@ We build in **thin vertical slices**: the first end-to-end path (data → baseli
 backtest → one figure) is delivered early to de-risk the whole pipeline, then methods and
 evaluation are layered on.
 
+**Deliverable notebooks & per-block workflow (see `SPEC.md` §13).** The three final
+notebooks (`01_data`, `02_modeling`, `03_analysis`) + technical `04_report` are created as
+empty skeletons and **filled block-by-block only after the author approves each block**.
+The author reviews/corrects at every conceptual block; after each fill we commit and point
+to exactly what changed and where to look. Notebook filling happens incrementally across
+the phases below (NB1 during Phase 1, NB2 during Phases 2–3, NB3 during Phase 4, NB4 in
+Phase 5), not only at the end.
+
 ## Architecture decisions (from SPEC)
 
 - **Index:** S&P 500; **benchmark:** total-return `^SP500TR`; **rebalance:** monthly on
@@ -147,17 +155,21 @@ evaluation are layered on.
     `reports/figures/`. *Verify:* manual review of outputs; `pytest` for table builders.
   - *Deps:* 7, 9–10. *Files:* 3–4. *Scope:* M–L (split if needed).
 
-- **Task 14 — Notebooks 01–04.** Thin narrative notebooks (data, methods, backtest/eval,
-  report figures) calling `src/`; run top-to-bottom on the snapshot.
-  - *Acceptance:* all four execute cleanly via `nbconvert --execute`. *Verify:*
-    `jupyter nbconvert --to notebook --execute notebooks/*.ipynb`.
-  - *Deps:* 8, 13. *Files:* 4. *Scope:* M.
+- **Task 14 — Consolidate content notebooks 01–03.** These are filled incrementally
+  block-by-block across earlier phases (SPEC §13); this task is the final consolidation +
+  clean top-to-bottom execution, with each block carrying intro + code + interpretation in
+  the author's voice.
+  - *Acceptance:* `01_data`, `02_modeling`, `03_analysis` execute cleanly via
+    `nbconvert --execute`; self-sufficient and in the author's voice. *Verify:*
+    `jupyter nbconvert --to notebook --execute notebooks/0{1,2,3}_*.ipynb`.
+  - *Deps:* 8, 13. *Files:* 3. *Scope:* M.
 
 ### Phase 5 — Report
 
-- **Task 15 — Polished PDF report (≤5 pages).** Assemble the report notebook → PDF via
-  `nbconvert`; professional styling (clean typography, consistent figure theme, official
-  layout); all 5 required items + transaction-cost discussion, every table/figure
+- **Task 15 — Technical report notebook → polished PDF (≤5 pages).** Fill
+  `notebooks/04_report.ipynb`: gather the key tables/figures from `results/` and
+  `reports/figures/`, explain the study step by step, render via `nbconvert`; professional/
+  official styling; all 5 required items + transaction-cost discussion, every item
   interpreted.
   - *Acceptance:* `reports/report.pdf` ≤5 pages, contains items 1–5 + cost discussion,
     looks polished/official. *Verify:* build PDF; page count ≤5; visual review.
