@@ -11,6 +11,9 @@ WINDOW_END = "2026-06-30"
 PRICE_INTERVAL = "1wk"  # weekly bars
 BENCHMARK_TICKER = "^SP500TR"  # S&P 500 total-return index
 
+# In-sample / out-of-sample boundary: IS 2015-2020, OOS from here.
+SPLIT_DATE = "2021-01-01"
+
 # Defaults consumed by later phases.
 REBALANCE = "monthly"
 TRANSACTION_COST_BPS = 10.0
